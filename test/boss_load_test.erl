@@ -15,7 +15,9 @@ load_view_inner_test() ->
 load_view_inner_bad_test() ->
     Inner	= boss_load:load_views_inner(test, ".", self()),
     ?assert(is_function(Inner, 2)),
-    ?assertEqual([],Inner("../test/bad.dtl", [])).
+    [[DtlError]] = Inner("../test/bad.dtl", []),
+    %% Illegal character "}" = 125
+    ?assertEqual({"../test/bad.dtl", [{{1, 11}, erlydtl_scanner, {illegal_char, 125}}]}, DtlError).
    
 
 load_view_inner_no_file_test() ->
